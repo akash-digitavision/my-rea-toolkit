@@ -17,6 +17,7 @@
 import { spawnSync } from "node:child_process";
 import { accessSync, constants, existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { delimiter } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir, platform, userInfo } from "node:os";
 
@@ -115,7 +116,13 @@ function materializeDependencies(nodePath, skip) {
   const cmd = useDirect ? nodePath : "npm";
   const baseArgs = useDirect ? [npmCli, "ci", "--omit=dev", "--no-audit", "--no-fund"] : ["ci", "--omit=dev", "--no-audit", "--no-fund"];
   console.log("  ..  installing REA production dependencies (npm ci --omit=dev); this can take a few minutes");
-  const r = spawnSync(cmd, baseArgs, { cwd: REA_HOME, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  // npm lifecycle scripts (e.g. the repo's prepare hook) spawn `node` through
+  // cmd.exe; make sure the resolved node's directory is on the child PATH.
+  const childEnv = {
+    ...process.env,
+    PATH: `${dirname(nodePath)}${delimiter}${process.env.PATH || ""}`,
+  };
+  const r = spawnSync(cmd, baseArgs, { cwd: REA_HOME, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: childEnv });
   if (r.status !== 0) {
     warn(`npm ci failed (exit ${r.status}). Re-run with network access, or run it manually in runtime/rea. stderr tail: ${(r.stderr || "").split("\n").slice(-3).join(" | ")}`);
     return false;
