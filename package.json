@@ -1,0 +1,36 @@
+{
+  "name": "dsh-rea-toolkit",
+  "version": "1.0.0",
+  "description": "REA (Reverse Engineer Anything) MCP toolkit for DeepSeek Harness: static analysis of JavaScript/Electron apps, browser extensions, native binaries and more, served over the bundled REA runtime.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akash-digitavision/my-rea-toolkit.git"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "mcp",
+    "reverse-engineering",
+    "code-analysis",
+    "ast",
+    "rea"
+  ],
+  "exports": { "./locale/*.json": "./locale/*.json", "./icon": "./icon.svg" },
+  "files": [
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "index.js",
+    "install-tools.mjs",
+    "install-tools.bat",
+    "install-tools.sh",
+    "README.md",
+    "LICENSE",
+    "runtime/rea"
+  ],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}

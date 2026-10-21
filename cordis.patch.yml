@@ -1,0 +1,22 @@
+# REA Toolkit MCP connection for DeepSeek Harness.
+#
+# Resolution contract (first match wins):
+#   1. DSH_REA_NODE + DSH_REA_HOME set  -> absolute node + bundled REA runtime (offline, validated artifact).
+#   2. DSH_REA_HOME set only            -> "node" from PATH + bundled REA runtime.
+#   3. Neither set                      -> npx fetches the official rea-agents runtime from npm.
+#
+# Run install-tools.(bat|sh|mjs) once per workspace to provision (1) or (2); it
+# persists both variables at user scope and verifies the runtime with
+# `rea mcp doctor`. Restart DeepSeek Harness afterwards so the host process
+# inherits the variables. failOnStartupError stays false so an unprovisioned
+# workspace degrades to no REA tools instead of blocking harness boot.
+- insert:
+    - id: rea-toolkit-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: rea
+        transport: stdio
+        command: !!js 'process.env.DSH_REA_NODE || (process.env.DSH_REA_HOME ? "node" : "npx")'
+        args: !!js 'process.env.DSH_REA_HOME ? [process.env.DSH_REA_HOME + "/scripts/rea.mjs", "mcp"] : ["-y", "rea-agents@6.7.0", "mcp"]'
+        failOnStartupError: false
+        toolCallTimeoutMs: 120000

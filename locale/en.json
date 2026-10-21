@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "REA Toolkit",
+    "description": "Connects the REA (Reverse Engineer Anything) MCP server: static JavaScript/Electron/extension analysis, binary inspection and evidence-backed reverse engineering tools."
+  }
+}
